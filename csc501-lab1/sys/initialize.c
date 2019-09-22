@@ -109,6 +109,8 @@ int nulluser()				/* babysit CPU when no one home */
 	kprintf("clock %sabled\n", clkruns == 1?"en":"dis");
 	enable();		/* enable interrupts */
 
+	kprintf("rdytail: %d ,readyhead %d \n",rdytail,rdyhead);
+
 	open(CONSOLE, console_dev, 0);
 
 	/* create a process to execute the user's main program */

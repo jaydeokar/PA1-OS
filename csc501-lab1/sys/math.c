@@ -1,3 +1,5 @@
+#include <math.h>
+
 
 double log(double x){
 
@@ -29,10 +31,12 @@ double pow(double x, int y){
 double expdev(double lambda){
 
 	double dummy;
-    	do
-        	dummy = (double)rand() / RAND_MAX;
-    	while (dummy == 0.0);
+    	do{
+        	dummy = (double)rand() / 077777; // TODO: should use 077777 or RAND_MAX
+    	}
+	while (dummy == 0.0);
 
     	return -(log(dummy) / lambda);
 
 }
+
