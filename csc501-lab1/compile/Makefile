@@ -49,7 +49,7 @@ SYS =	blkcmp.c	blkequ.c	main.c		stacktrace.c	\
 	sleep100.c	sleep1000.c	sreset.c	suspend.c	\
 	unsleep.c	userret.c	wait.c		wakeup.c	\
 	write.c		xdone.c		pci.c		shutdown.c	\
-	math.c		selSched.c	refreshEpoch.c
+	math.c		selSched.c
 
 TTY =	ttyalloc.c	ttycntl.c	ttygetc.c	ttyiin.c	\
 	ttyinit.c	ttynew.c	ttyopen.c	ttyputc.c	\
@@ -423,9 +423,6 @@ recvclr.o: ../sys/recvclr.c /usr/include/stdc-predef.h ../h/conf.h \
 recvtim.o: ../sys/recvtim.c /usr/include/stdc-predef.h ../h/conf.h \
  ../h/kernel.h ../h/systypes.h ../h/mem.h ../h/proc.h ../h/q.h \
  ../h/sleep.h ../h/stdio.h
-refreshEpoch.o: ../sys/refreshEpoch.c /usr/include/stdc-predef.h \
- ../h/conf.h ../h/kernel.h ../h/systypes.h ../h/mem.h ../h/proc.h \
- ../h/q.h ../h/math.h ../h/sched.h
 resched.o: ../sys/resched.c /usr/include/stdc-predef.h ../h/conf.h \
  ../h/kernel.h ../h/systypes.h ../h/mem.h ../h/proc.h ../h/q.h \
  ../h/math.h ../h/sched.h

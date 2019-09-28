@@ -38,7 +38,6 @@ int resched()
                 }
 		
 		rand = (int) expdev(0.1);
-	//	kprintf("random value %d \n",rand);
 		right = q[rdytail].qprev;
  		left = q[rdyhead].qnext;  
 		lastMatch = right;
@@ -60,7 +59,8 @@ int resched()
 		// this case happens when there is no null process in the ready queue. So the lastmatch doesn't get any process
 		// and hence we need to execute null process
 		if(right > NPROC){
-                        currpid = 0;
+                        lastMatch = 0;
+			currpid = dequeue(currpid);
                 //        kprintf("right is greater than NPROC \n");
                 }
 		else{
@@ -86,7 +86,7 @@ int resched()
 		optr = &proctab[currpid];
 		optr->counter  = preempt;
 //		kprintf("pid: %d \n",currpid);
-
+		int startEpoch = 0;
 		if (currpid == 0){
 			optr->counter = 0;
 			optr->gvalue = 0;
@@ -112,6 +112,7 @@ int resched()
 		if (i >= NPROC){
 		        int x = 1;
         		while(x < NPROC){
+				startEpoch = 1;
                 		if (proctab[x].pstate != PRFREE){
                         		proctab[x].sprio = proctab[x].pprio;
                         		proctab[x].counter = (proctab[x].counter/2) + proctab[x].sprio;  // new process will have counter = 0, so no if else
@@ -119,8 +120,8 @@ int resched()
                 		}
                 		x = x+1;
         		}
-	
 		}
+	
 		//Step2: Find the greatest goodness value from the 
 		// Goodness value will be from all the runnable process. this should be from the queue for RR
 		// Iterate over the entire queue and get the maximum goodness from the queue from the tail
@@ -137,36 +138,39 @@ int resched()
 			right = q[right].qprev;
 		}
 		// if the current goodness is greater than the max goodness obtained, run the current process given its state is still READY
-		// else put the maximum goodness
+		if (maxGoodnessProcess == 0){
+			if (currpid == 0){
+                                return OK;
+                        }
+
+                        if (optr->pstate == PRCURR) {
+                                 optr->pstate = PRREADY;
+                                 insert(currpid,rdyhead,optr->pprio);
+                        }
+
+                        currpid = dequeue(0);
+                        nptr = &proctab[currpid];
+                        nptr->pstate = PRCURR;          /* mark it currently running    */
+                #ifdef  RTCLOCK
+                        preempt = QUANTUM;              /* reset preemption counter     */
+                #endif
+                        ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
+ 
+                        return OK;
+		}
 		
-		if (maxGoodness < optr->gvalue && optr->counter > 0){
+		if (maxGoodness < optr->gvalue && optr->counter > 0 && optr->pstate == PRCURR){
 			maxGoodnessProcess = currpid;
 			maxGoodness = optr->gvalue;
+			return OK;
 		}
+		else{	
 	
-               if (optr->pstate == PRCURR) {
-                		optr->pstate = PRREADY;
-                        	insert(currpid,rdyhead,optr->pprio);
-                }
-		
-
-//		if (maxGoodnessProcess == 0){
-		//	kprintf("null process started \n");
-//			currpid = NULLPROC;
-//			nptr = &proctab[currpid];
- //               	nptr->pstate = PRCURR;          /* mark it currently running    */
-//        	#ifdef  RTCLOCK
-//                	preempt = QUANTUM;              /* reset preemption counter     */
-//        	#endif
-//                	ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
-
-                /* The OLD process returns here when resumed. */
-//                	return OK;
-
-//		}
-
-//		else{
-				
+                	if (optr->pstate == PRCURR) {
+                			optr->pstate = PRREADY;
+                        		insert(currpid,rdyhead,optr->pprio);
+                	}	
+			
 			currpid = dequeue(maxGoodnessProcess);
 			nptr = &proctab[currpid];
                         nptr->pstate = PRCURR;          /* mark it currently running    */
@@ -176,13 +180,7 @@ int resched()
                         ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
 			return OK;
 		
-//	}
-
-
-		//Step3: If the max value is still 0, then run the null process. Check if the current one is null process
-		//if the current is null return ok
-
-		//Step4: If the max value > 0, the process is scheduled and the preemption time is st			
+		}
 
 
 	}
