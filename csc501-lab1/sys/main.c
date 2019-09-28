@@ -58,7 +58,7 @@ int main() {
 		}
         kprintf("\n");
 	}
-	shutdown();
+	//shutdown();
 	return 0;
 }
 int proc_a(char c) {
