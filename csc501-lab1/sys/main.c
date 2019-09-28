@@ -66,7 +66,6 @@ int proc_a(char c) {
 	kprintf("Start... %c\n", c);
 	b_cnt = 0;
 	c_cnt = 0;
-
 	while (1) {
 		for (i = 0; i < 10000; i++)
 			;

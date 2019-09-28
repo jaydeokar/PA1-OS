@@ -60,6 +60,9 @@ struct	pentry	{
 	int	fildes[_NFILE];		/* file - device translation	*/
 	int	ppagedev;		/* pageing dgram device		*/
 	int	pwaitret;
+        int	counter;		/* maintains the remaining ticks in a epoch*/
+	int	gvalue;			/* goodness value of the process for a epoch*/
+	int	sprio;			/* saved priority value for epoch*/
 };
 
 

@@ -1,0 +1,41 @@
+1) What are the advantages and disadvantages of each of the two scheduling policies? Also, give the advantages and disadvantages of the round robin scheduling policy originally implemented in Xinu.
+
+Exponential based scheduling:
+Advantages: 
+1) It is better than the Round robin based scheduling because here scheduling depends on the generation of random number. So low priority process can also have a fair chance and do not undergo starvation
+2) Here, we also give the same amount of CPU time to each process irrespective of their priority so that one process does not hogg up most of the CPU time.
+
+Disadvantages:
+1) The generation of random number depends on how we design our random number generator. Here since we had a exponential generation, the higher priority processes were given less opportunities to run.
+
+
+Linux Scheduling
+Advantages:
+1) Every process gets a time quantum to execute in a Epoch. So it avoids have the starvation problem for lower priority process.
+2) Here, higher priority processes are given more time to execute than the lower priority process rather than giving all of the process same time to execute.
+
+
+Disadvantages:
+1) A new process has to wait till the current executing epoch gets completed. Thus we might not schedule a high priority process till a Epoch is completed.
+2) It involves too many state variables to be maintained like the priority before the epoch begins, the counter value that the process is allowed to execute for and goodness values. This is okay for small process queues but for a large number of process, calculating goodness values at every epoch can be costly and time consuming.
+
+
+
+Default Round Robin
+Advantages:
+1) Since the scheduling is round robin, it ensures that process with same priority levels are given equal CPU time to execute
+2) Rescheduling is fast between the process as the selection logic is pretty simple and less costly.
+  
+Disadvantages 
+1) Here highest priority process gets scheduled everytime. So there is a possibility of low priority process to undergo starvation
+2) The rescheduing time duration has to be carefully choosen. If it is too small, we would have a overhead of context switching and if it is too large, the remaining process would take more time to start executing. 
+
+
+Q.2) Describe the way each of the schedulers affects the NULL process.
+Exponential Based scheduling:
+1) Here, we know that the NULL process has a priority of 0. So, we always have the NULL process at the prhead of the queue with higher priority process towards the tail. So, here when we generate a random number, untill we have any runnable process whose priority is greater than 0, Null process will not get executed. If we dont have a runnable process(i.e either processes are in killed or sleeping), then and only then the NULL process is scheduled. A new process also gets scheduled when it becomes runnable and the null process gets unscheduled.
+
+
+Linux Scheduling
+1) Even here, NULL process has a priority of 0 and we have goodness for a NULL process as 0. The scheduling selection happens based on the maximum goodness values. If the goodness values of all the runnable processes is 0, an epoch finishes. If after this, we still don't have any runnable process, NULL process gets scheduled. Here, the difference being that the goodness value and counter of NULL process is set to be 0. So whenever any a process changes its state to ready (from sleep) in a epoch, the process is scheduled and NULL process is unscheduled. 
+ 
